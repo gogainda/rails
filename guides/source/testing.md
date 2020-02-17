@@ -535,7 +535,7 @@ class ActiveSupport::TestCase
 end
 ```
 
-Rails applications generated from JRuby will automatically include the `with: :threads` option.
+Rails applications generated from Ruby implementations that do not support fork will automatically include the `with: :threads` option.
 
 The number of workers passed to `parallelize` determines the number of threads the tests will use. You may
 want to parallelize your local test suite differently from your CI, so an environment variable is provided
