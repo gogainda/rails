@@ -2,7 +2,10 @@
 
 require "cases/helper"
 require "models/bird"
-require "byebug"
+begin
+  require "byebug"
+rescue LoadError
+end
 
 class BasePreventWritesTest < ActiveRecord::TestCase
   if !in_memory_db?

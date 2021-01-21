@@ -132,16 +132,22 @@ end
           ])
           puts fake_command
 
-          # We could run these in parallel, but pretty much all of the
-          # railties tests already run in parallel, so ¯\_(⊙︿⊙)_/¯
-          Process.waitpid fork {
-            ARGV.clear.concat test_options
-            Rake.application = nil
+          if Process.respond_to?(:fork)
+            # We could run these in parallel, but pretty much all of the
+            # railties tests already run in parallel, so ¯\_(⊙︿⊙)_/¯
+            Process.waitpid fork {
+              ARGV.clear.concat test_options
+              Rake.application = nil
 
-            Minitest.autorun
+              Minitest.autorun
 
-            load file
-          }
+              load file
+            }
+          else
+            cmd = "bundle exec ruby -w -Itest -Ilib -I../activesupport/lib -I../activemodel/lib -e 'require \"minitest\";Minitest.autorun; load #{file.inspect}'"
+            puts cmd
+            system(cmd)
+          end
 
           unless $?.success?
             failing_files << file
@@ -222,15 +228,27 @@ namespace :db do
     desc "Build the PostgreSQL test databases"
     task :build do
       config = ARTest.config["connections"]["postgresql"]
-      %x( createdb -E UTF8 -T template0 #{config["arunit"]["database"]} )
-      %x( createdb -E UTF8 -T template0 #{config["arunit2"]["database"]} )
+      host_param = config["arunit"]["host"] ? "-h #{config["arunit"]["host"]} " : ""
+      user_param = config["arunit"]["user"] ? "-U #{config["arunit"]["user"]} " : ""
+      host_param2 = config["arunit2"]["host"] ? "-h #{config["arunit2"]["host"]} " : ""
+      user_param2 = config["arunit2"]["user"] ? "-U #{config["arunit2"]["user"]} " : ""
+      ENV["PGPASSWORD"] = config["arunit"]["password"] if config["arunit"]["password"]
+      %x( createdb #{host_param}#{user_param}--no-password -E UTF8 -T template0 #{config["arunit"]["database"]} )
+      ENV["PGPASSWORD"] = config["arunit2"]["password"] if config["arunit2"]["password"]
+      %x( createdb #{host_param2}#{user_param2}--no-password -E UTF8 -T template0 #{config["arunit2"]["database"]} )
     end
 
     desc "Drop the PostgreSQL test databases"
     task :drop do
       config = ARTest.config["connections"]["postgresql"]
-      %x( dropdb #{config["arunit"]["database"]} )
-      %x( dropdb #{config["arunit2"]["database"]} )
+      host_param = config["arunit"]["host"] ? "-h #{config["arunit"]["host"]} " : ""
+      user_param = config["arunit"]["user"] ? "-U #{config["arunit"]["user"]} " : ""
+      host_param2 = config["arunit2"]["host"] ? "-h #{config["arunit2"]["host"]} " : ""
+      user_param2 = config["arunit2"]["user"] ? "-U #{config["arunit2"]["user"]} " : ""
+      ENV["PGPASSWORD"] = config["arunit"]["password"] if config["arunit"]["password"]
+      %x( dropdb #{host_param}#{user_param}--no-password #{config["arunit"]["database"]} )
+      ENV["PGPASSWORD"] = config["arunit2"]["password"] if config["arunit2"]["password"]
+      %x( dropdb #{host_param2}#{user_param2}--no-password #{config["arunit2"]["database"]} )
     end
 
     desc "Rebuild the PostgreSQL test databases"

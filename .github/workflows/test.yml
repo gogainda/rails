@@ -1,0 +1,461 @@
+---
+name: Test Rails
+'on': push
+jobs:
+  Bundle_Install_-truffleruby-head_-_ubuntu-latest-:
+    name: Bundle Install (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+  activesupport_-truffleruby-head_-_ubuntu-latest-:
+    name: activesupport (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: activesupport
+    services:
+      memcached:
+        image: memcached:latest
+        ports:
+        - 11211:11211
+        options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout
+          5s --health-retries 5
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activesupport_isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: activesupport isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test:isolated
+      working-directory: activesupport
+    services:
+      memcached:
+        image: memcached:latest
+        ports:
+        - 11211:11211
+        options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout
+          5s --health-retries 5
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actioncable_-truffleruby-head_-_ubuntu-latest-:
+    name: actioncable (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: actioncable
+    services:
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout
+          5s --health-retries 5
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionmailbox_-truffleruby-head_-_ubuntu-latest-:
+    name: actionmailbox (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: actionmailbox
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionmailer_-truffleruby-head_-_ubuntu-latest-:
+    name: actionmailer (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: actionmailer
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionmailer_isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: actionmailer isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test:isolated
+      working-directory: actionmailer
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionpack_-truffleruby-head_-_ubuntu-latest-:
+    name: actionpack (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: actionpack
+    services:
+      memcached:
+        image: memcached:latest
+        ports:
+        - 11211:11211
+        options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionpack_isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: actionpack isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test:isolated
+      working-directory: actionpack
+    services:
+      memcached:
+        image: memcached:latest
+        ports:
+        - 11211:11211
+        options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actiontext_-truffleruby-head_-_ubuntu-latest-:
+    name: actiontext (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: actiontext
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionview_-truffleruby-head_-_ubuntu-latest-:
+    name: actionview (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: actionview
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  actionview_isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: actionview isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test:isolated
+      working-directory: actionview
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activejob_-truffleruby-head_-_ubuntu-latest-:
+    name: activejob (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: activejob
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activejob_isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: activejob isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test:isolated
+      working-directory: activejob
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activemodel_-truffleruby-head_-_ubuntu-latest-:
+    name: activemodel (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test
+      working-directory: activemodel
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activemodel_isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: activemodel isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: bundle exec rake test:isolated
+      working-directory: activemodel
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activerecord_mysql2_-truffleruby-head_-_ubuntu-latest-:
+    name: activerecord mysql2 (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y --no-install-recommends default-libmysqlclient-dev
+        default-mysql-client
+    - run: |-
+        mysql --host 127.0.0.1 --port 3306 -uroot -ppassword -e "create user rails@'%';grant all privileges on activerecord_unittest.* to rails@'%';grant all privileges on activerecord_unittest2.* to rails@'%';grant all privileges on inexistent_activerecord_unittest.* to rails@'%';create database activerecord_unittest default character set utf8mb4;create database activerecord_unittest2 default character set utf8mb4;
+                "
+    - run: bundle exec rake db:mysql:rebuild mysql2:test
+      working-directory: activerecord
+    services:
+      mysql:
+        image: mysql:latest
+        ports:
+        - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
+          --health-retries=3
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+      MYSQL_HOST: 127.0.0.1
+  activerecord_mysql2-isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: activerecord mysql2:isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y --no-install-recommends default-libmysqlclient-dev
+        default-mysql-client
+    - run: |-
+        mysql --host 127.0.0.1 --port 3306 -uroot -ppassword -e "create user rails@'%';grant all privileges on activerecord_unittest.* to rails@'%';grant all privileges on activerecord_unittest2.* to rails@'%';grant all privileges on inexistent_activerecord_unittest.* to rails@'%';create database activerecord_unittest default character set utf8mb4;create database activerecord_unittest2 default character set utf8mb4;
+                "
+    - run: bundle exec rake db:mysql:rebuild mysql2:isolated_test
+      working-directory: activerecord
+    services:
+      mysql:
+        image: mysql:latest
+        ports:
+        - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
+          --health-retries=3
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+      MYSQL_HOST: 127.0.0.1
+  activerecord_postgresql_-truffleruby-head_-_ubuntu-latest-:
+    name: activerecord postgresql (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y --no-install-recommends postgresql-client
+    - run: bundle exec rake db:postgresql:rebuild postgresql:test
+      working-directory: activerecord
+    services:
+      postgres:
+        image: postgres
+        ports:
+        - 5432:5432
+        options: "--health-cmd pg_isready --health-interval 10s --health-timeout 5s
+          --health-retries 5"
+        env:
+          POSTGRES_PASSWORD: postgres
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: postgres
+  activerecord_postgresql-isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: activerecord postgresql:isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y --no-install-recommends postgresql-client
+    - run: bundle exec rake db:postgresql:rebuild postgresql:isolated_test
+      working-directory: activerecord
+    services:
+      postgres:
+        image: postgres
+        ports:
+        - 5432:5432
+        options: "--health-cmd pg_isready --health-interval 10s --health-timeout 5s
+          --health-retries 5"
+        env:
+          POSTGRES_PASSWORD: postgres
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: postgres
+  activerecord_sqlite3_-truffleruby-head_-_ubuntu-latest-:
+    name: activerecord sqlite3 (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y --no-install-recommends sqlite3
+    - run: bundle exec rake sqlite3:test
+      working-directory: activerecord
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
+  activerecord_sqlite3-isolated_-truffleruby-head_-_ubuntu-latest-:
+    name: activerecord sqlite3:isolated (truffleruby-head / ubuntu-latest)
+    runs-on: ubuntu-latest
+    needs: Bundle_Install_-truffleruby-head_-_ubuntu-latest-
+    steps:
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: truffleruby-head
+        bundler-cache: true
+    - run: bundle install
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y --no-install-recommends sqlite3
+    - run: bundle exec rake sqlite3:isolated_test
+      working-directory: activerecord
+    env:
+      PARALLEL_WORKERS: '1'
+      MT_CPU: '1'
