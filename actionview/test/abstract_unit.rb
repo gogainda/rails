@@ -179,7 +179,11 @@ module ActionDispatch
 end
 
 class ActiveSupport::TestCase
-  parallelize
+  if Process.respond_to?(:fork) && !Gem.win_platform?
+    parallelize
+  else
+    parallelize(with: :threads)
+  end
 
   include ActiveSupport::Testing::MethodCallAssertions
 
@@ -192,6 +196,10 @@ class ActiveSupport::TestCase
     # Skips the current run on JRuby using Minitest::Assertions#skip
     def jruby_skip(message = "")
       skip message if defined?(JRUBY_VERSION)
+    end
+
+    def truffleruby_skip(message = "")
+      skip message if RUBY_ENGINE == "truffleruby"
     end
 end
 

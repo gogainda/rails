@@ -68,11 +68,39 @@ connections:
   postgresql:
     arunit:
       min_messages: warning
+<% if ENV['POSTGRES_HOST'] %>
+      host: <%= ENV['POSTGRES_HOST'] %>
+<% end %>
+<% if ENV['POSTGRES_USER'] %>
+      user: <%= ENV['POSTGRES_USER'] %>
+<% end %>
+<% if ENV['POSTGRES_PASSWORD'] %>
+      password: <%= ENV['POSTGRES_PASSWORD'] %>
+<% end %>
+
     arunit_without_prepared_statements:
       min_messages: warning
       prepared_statements: false
+<% if ENV['POSTGRES_HOST'] %>
+      host: <%= ENV['POSTGRES_HOST'] %>
+<% end %>     
+<% if ENV['POSTGRES_USER'] %>
+      user: <%= ENV['POSTGRES_USER'] %>
+<% end %>
+<% if ENV['POSTGRES_PASSWORD'] %>
+      password: <%= ENV['POSTGRES_PASSWORD'] %>
+<% end %>
     arunit2:
       min_messages: warning
+<% if ENV['POSTGRES_HOST'] %>
+      host: <%= ENV['POSTGRES_HOST'] %>
+<% end %>
+<% if ENV['POSTGRES_USER'] %>
+      user: <%= ENV['POSTGRES_USER'] %>
+<% end %>
+<% if ENV['POSTGRES_PASSWORD'] %>
+      password: <%= ENV['POSTGRES_PASSWORD'] %>
+<% end %>
 
   sqlite3:
     arunit:
