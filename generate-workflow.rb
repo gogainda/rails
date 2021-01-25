@@ -12,13 +12,13 @@ require 'json'
 FILENAME = 'test.yml'
 OS = 'ubuntu-latest'
 RUBY_VERSIONS = {
-    # '2.7' => {}, 
-    'truffleruby-head'  => { 
-        :test_env => {
-         #   'PARALLEL_WORKERS' => '1',
-            'MT_CPU' => '1',
-        },
-    },
+    '2.7' => {}, 
+    # 'truffleruby-head'  => { 
+    #     :test_env => {
+    #      #   'PARALLEL_WORKERS' => '1',
+    #         'MT_CPU' => '1',
+    #     },
+    # },
 }
 
 def normalize_key(string)
