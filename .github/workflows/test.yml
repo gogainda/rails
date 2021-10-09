@@ -1,6 +1,10 @@
 ---
 name: Test Rails
-'on': push
+on:
+  push:
+    branches: [main ]
+  schedule: 
+    - cron: "0 13 * * 1" 
 jobs:
   Bundle_Install_-truffleruby-head_-_ubuntu-latest-:
     name: Bundle Install (truffleruby-head / ubuntu-latest)
